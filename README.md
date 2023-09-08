@@ -1,23 +1,27 @@
 This is designed to predict whether someone is at risk of having a stroke given a set of lifestyle factors (detailed below) and the presence or absence of Gene ATP2B1. 
 
-id	- unique ID assigned to each individual whose lifestyle factors are part of the database
-
-gender	- Male or Female
-
-age	- between 1 and 78
-
-ATP2B1	- 1 or 0; presence or absence of gene ATP2B1, which is associated with hypertension
-
-heart_disease	- 1 or 0; yes or no
-
-ever_married	- Yes or No
-
-work_type	- Private, Self-employed or Govt_job
-
-Residence_type	- Urban or Rural
-
-avg_glucose_level	
-
-bmi	
-
-smoking_status - formerly, never, smokes or Unknown
+1) id: unique identifier
+  
+2) gender: "Male", "Female" or "Other"
+   
+3) age: age of the patient
+   
+4) hypertension: 0 if the patient doesn't have hypertension, 1 if the patient has hypertension
+   
+5) heart_disease: 0 if the patient doesn't have any heart diseases, 1 if the patient has a heart disease
+    
+6) ever_married: "No" or "Yes"
+    
+7) work_type: "children", "Govt_jov", "Never_worked", "Private" or "Self-employed"
+    
+8) Residence_type: "Rural" or "Urban"
+    
+9) avg_glucose_level: average glucose level in blood
+    
+10) bmi: body mass index
+    
+11) smoking_status: "formerly smoked", "never smoked", "smokes" or "Unknown"*
+    
+12) stroke: 1 if the patient had a stroke or 0 if not
+    
+*Note: "Unknown" in smoking_status means that the information is unavailable for this patient
