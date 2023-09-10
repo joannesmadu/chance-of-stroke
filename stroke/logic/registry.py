@@ -7,7 +7,7 @@ from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
 
-from taxifare.params import *
+from stroke.logic.params import *
 def save_results(params: dict, metrics: dict) -> None:
     """
     Persist params & metrics locally on the hard drive at

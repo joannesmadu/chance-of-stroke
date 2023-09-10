@@ -6,12 +6,12 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='stroke',
-      version="0.0.4",
-      description="Chance of Stroke",
-      license="MIT",
-      author="Le Wagon",
+      version="0.0.1",
+      description="Stroke Prediction Dataset",
+      license="Data files © Original Authors",
+      author="fedesoriano",
       author_email="contact@lewagon.org",
-      #url="https://github.com/lewagon/taxi-fare",
+      #url="https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset",
       install_requires=requirements,
       packages=find_packages(),
       test_suite="tests",

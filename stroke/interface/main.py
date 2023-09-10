@@ -10,25 +10,20 @@ from stroke.logic.params import *
 from stroke.logic.model import initialize_model, train_model
 from stroke.logic.preprocess import preprocess_features
 
-def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01') -> None:
+def preprocess_and_train() -> None:
     """
-    - Query the raw dataset from Le Wagon's BigQuery dataset
+    - Retrieve dataset from Kaggle
     - Cache query result as a local CSV if it doesn't exist locally
     - Clean and preprocess data
     - Train a KNClassifier model on it
     - Save the model
-    - Compute & save a validation performance metric
     """
 
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess_and_train" + Style.RESET_ALL)
 
-    query = f"""
-        SELECT {",".join(COLUMN_NAMES_RAW)}
-        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}
-        """
 
-    # Retrieve `query` data from BigQuery or from `data_query_cache_path` if the file already exists!
-    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"healthcare-dataset-stroke-data.csv")
+    # Retrieve dataset from Kaggle or from `data_query_cache_path` if the file already exists!
+    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", "healthcare-dataset-stroke-data.csv")
     data_query_cached_exists = data_query_cache_path.is_file()
 
     if data_query_cached_exists:
@@ -36,20 +31,19 @@ def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01
         data = pd.read_csv(data_query_cache_path)
 
     else:
-        print("Loading data from Querying Big Query server...")
+        print("Loading data from Kaggle server...")
 
-        from google.cloud import bigquery
+        #import and set up Kaggle and API
+        import kaggle
+        from kaggle.api.kaggle_api_extended import KaggleApi
+        api = KaggleApi()
+        api.authenticate()
 
-        client = bigquery.Client(project=GCP_PROJECT)
-        query_job = client.query(query)
-        result = query_job.result()
-        data = result.to_dataframe()
+        #Download Kaggle dataset
+        kaggle.api.dataset_download_file("fedesoriano/stroke-prediction-dataset", "healthcare-dataset-stroke-data.csv", path=None, force=False, quiet=True)
 
         # Save it locally to accelerate the next queries!
         data.to_csv(data_query_cache_path, header=True, index=False)
-
-    # Clean data using data.py
-    data = clean_data(data)
 
     # Create (X_train, y_train) without data leaks
     split_ratio = 0.2
@@ -58,12 +52,11 @@ def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01
 
     data_train = data.iloc[:train_length, :].sample(frac=1)
 
-    X_train = data_train.drop("fare_amount", axis=1)
-    y_train = data_train[["fare_amount"]]
+    X_train = data_train.drop("stroke")
+    y_train = data_train[["stroke"]]
 
 
-    # Create (X_train_processed, X_val_processed) using `preprocessor.py`
-    # Luckily, our preprocessor is stateless: we can `fit_transform` both X_train and X_val without data leakage!
+    # Create X_train_processed using `preprocessor.py`
     X_train_processed = preprocess_features(X_train)
 
     # Train a model on the training set, using `model.py`
@@ -87,105 +80,11 @@ def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01
     print("✅ preprocess_and_train() done")
 
 
-def preprocess(min_date: str = '2009-01-01', max_date: str = '2015-01-01') -> None:
-    """
-    1. Query and preprocess the raw dataset iteratively (in chunks)
-    2. Store the newly processed (and raw) data on your local hard drive for later use
-
-    - If raw data already exists on your local disk, use `pd.read_csv(..., chunksize=CHUNK_SIZE)`
-    - If raw data does NOT yet exist, use `bigquery.Client().query().result().to_dataframe_iterable()`
-    """
-    print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess by batch" + Style.RESET_ALL)
-
-    min_date = parse(min_date).strftime('%Y-%m-%d') # e.g '2009-01-01'
-    max_date = parse(max_date).strftime('%Y-%m-%d') # e.g '2009-01-01'
-
-    query = f"""
-        SELECT {",".join(COLUMN_NAMES_RAW)}
-        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}
-        """
-    # Retrieve `query` data as a DataFrame iterable
-    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"query_{min_date}_{max_date}_{DATA_SIZE}.csv")
-    data_processed_path = Path(LOCAL_DATA_PATH).joinpath("processed", f"processed_{min_date}_{max_date}_{DATA_SIZE}.csv")
-
-    data_query_cache_exists = data_query_cache_path.is_file()
-    if data_query_cache_exists:
-        print("Get a DataFrame iterable from local CSV...")
-        chunks = None
-
-        # $CODE_BEGIN
-        chunks = pd.read_csv(
-            data_query_cache_path,
-            chunksize=CHUNK_SIZE,
-            parse_dates=["pickup_datetime"]
-        )
-        # $CODE_END
-    else:
-        print("Get a DataFrame iterable from querying the BigQuery server...")
-        chunks = None
-
-        # 🎯 HINT: `bigquery.Client(...).query(...).result(page_size=...).to_dataframe_iterable()`
-        # $CODE_BEGIN
-        client = bigquery.Client(project=GCP_PROJECT)
-
-        query_job = client.query(query)
-        result = query_job.result(page_size=CHUNK_SIZE)
-
-        chunks = result.to_dataframe_iterable()
-        # $CODE_END
-
-    for chunk_id, chunk in enumerate(chunks):
-        print(f"Processing chunk {chunk_id}...")
-
-        # Clean chunk
-        # $CODE_BEGIN
-        chunk_clean = clean_data(chunk)
-        # $CODE_END
-
-        # Create chunk_processed
-        # 🎯 HINT: create (`X_chunk`, `y_chunk`), process only `X_processed_chunk`, then concatenate (X_processed_chunk, y_chunk)
-        # $CODE_BEGIN
-        X_chunk = chunk_clean.drop("fare_amount", axis=1)
-        y_chunk = chunk_clean[["fare_amount"]]
-        X_processed_chunk = preprocess_features(X_chunk)
-
-        chunk_processed = pd.DataFrame(np.concatenate((X_processed_chunk, y_chunk), axis=1))
-        # $CODE_END
-
-        # Save and append the processed chunk to a local CSV at "data_processed_path"
-        # 🎯 HINT: df.to_csv(mode=...)
-        # 🎯 HINT: we want a CSV with neither index nor headers (they'd be meaningless)
-        # $CODE_BEGIN
-        chunk_processed.to_csv(
-            data_processed_path,
-            mode="w" if chunk_id==0 else "a",
-            header=False,
-            index=False,
-        )
-        # $CODE_END
-
-        # Save and append the raw chunk `if not data_query_cache_exists`
-        # $CODE_BEGIN
-        # 🎯 HINT: we want a CSV with headers this time
-        # 🎯 HINT: only the first chunk should store headers
-        if not data_query_cache_exists:
-            chunk.to_csv(
-                data_query_cache_path,
-                mode="w" if chunk_id==0 else "a",
-                header=True if chunk_id==0 else False,
-                index=False
-            )
-        # $CODE_END
-
-    print(f"✅ data query saved as {data_query_cache_path}")
-    print("✅ preprocess() done")
-
-
 def train(min_date:str = '2009-01-01', max_date:str = '2015-01-01') -> None:
     """
     Incremental training on the (already preprocessed) dataset, stored locally
 
-    - Loading data in chunks
+    - Load data
     - Updating the weight of the model for each chunk
     - Saving validation metrics at each chunk, and final model weights on the local disk
     """
