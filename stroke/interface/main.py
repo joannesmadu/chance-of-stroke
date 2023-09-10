@@ -15,25 +15,20 @@ def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01
     - Query the raw dataset from Le Wagon's BigQuery dataset
     - Cache query result as a local CSV if it doesn't exist locally
     - Clean and preprocess data
-    - Train a Keras model on it
+    - Train a KNClassifier model on it
     - Save the model
     - Compute & save a validation performance metric
     """
 
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess_and_train" + Style.RESET_ALL)
 
-    min_date = parse(min_date).strftime('%Y-%m-%d') # e.g '2009-01-01'
-    max_date = parse(max_date).strftime('%Y-%m-%d') # e.g '2009-01-01'
-
     query = f"""
         SELECT {",".join(COLUMN_NAMES_RAW)}
-        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}.raw_{DATA_SIZE}
-        WHERE pickup_datetime BETWEEN '{min_date}' AND '{max_date}'
-        ORDER BY pickup_datetime
+        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}
         """
 
     # Retrieve `query` data from BigQuery or from `data_query_cache_path` if the file already exists!
-    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"query_{min_date}_{max_date}_{DATA_SIZE}.csv")
+    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"healthcare-dataset-stroke-data.csv")
     data_query_cached_exists = data_query_cache_path.is_file()
 
     if data_query_cached_exists:
@@ -56,43 +51,28 @@ def preprocess_and_train(min_date:str = '2009-01-01', max_date:str = '2015-01-01
     # Clean data using data.py
     data = clean_data(data)
 
-    # Create (X_train, y_train, X_val, y_val) without data leaks
-    # No need for test sets, we'll report val metrics only
-    split_ratio = 0.02 # About one month of validation data
+    # Create (X_train, y_train) without data leaks
+    split_ratio = 0.2
 
     train_length = int(len(data) * (1 - split_ratio))
 
     data_train = data.iloc[:train_length, :].sample(frac=1)
-    data_val = data.iloc[train_length:, :].sample(frac=1)
 
     X_train = data_train.drop("fare_amount", axis=1)
     y_train = data_train[["fare_amount"]]
 
-    X_val = data_val.drop("fare_amount", axis=1)
-    y_val = data_val[["fare_amount"]]
 
     # Create (X_train_processed, X_val_processed) using `preprocessor.py`
     # Luckily, our preprocessor is stateless: we can `fit_transform` both X_train and X_val without data leakage!
     X_train_processed = preprocess_features(X_train)
-    X_val_processed = preprocess_features(X_val)
 
     # Train a model on the training set, using `model.py`
     model = None
-    learning_rate = 0.0005
-    batch_size = 256
-    patience = 2
 
     model = initialize_model(input_shape=X_train_processed.shape[1:])
-    model = compile_model(model, learning_rate=learning_rate)
 
-    model, history = train_model(
-        model, X_train_processed, y_train,
-        batch_size=batch_size,
-        patience=patience,
-        validation_data=(X_val_processed, y_val))
-
-    # Compute the validation metric (min val_mae) of the holdout set
-    val_mae = np.min(history.history['val_mae'])
+    model = train_model(
+        model, X_train_processed, y_train)
 
     # Save trained model
     params = dict(
@@ -122,9 +102,7 @@ def preprocess(min_date: str = '2009-01-01', max_date: str = '2015-01-01') -> No
 
     query = f"""
         SELECT {",".join(COLUMN_NAMES_RAW)}
-        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}.raw_{DATA_SIZE}
-        WHERE pickup_datetime BETWEEN '{min_date}' AND '{max_date}'
-        ORDER BY pickup_datetime
+        FROM {GCP_PROJECT_WAGON}.{BQ_DATASET}
         """
     # Retrieve `query` data as a DataFrame iterable
     data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"query_{min_date}_{max_date}_{DATA_SIZE}.csv")
