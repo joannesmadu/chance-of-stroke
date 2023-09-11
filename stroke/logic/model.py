@@ -1,9 +1,9 @@
 import numpy as np
+import pandas as pd
 import time
+import pickle
 
 from colorama import Fore, Style
-from typing import Tuple
-from keras import Model
 
 # Timing the TF import
 print(Fore.BLUE + "\nLoading KNClassifier..." + Style.RESET_ALL)
@@ -14,9 +14,23 @@ from sklearn.neighbors import KNeighborsClassifier
 end = time.perf_counter()
 print(f"\n✅ KNClassifier loaded ({round(end - start, 2)}s)")
 
+def load_model():
+
+    pipeline = pickle.load(open("/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl", "rb"))
+
+    return pipeline
 
 
-def initialize_model(input_shape: tuple) -> Model:
+def pipeline_predict(new_data):
+
+    pipeline = pickle.load(open("/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl", "rb"))
+
+    predicted_class = pipeline.predict(new_data.loc[:,'id':'smoking_status'])
+
+    return predicted_class
+
+
+def initialize_model(model):
 
     model = KNeighborsClassifier(n_jobs=-1, n_neighbors=5)
 
@@ -25,10 +39,10 @@ def initialize_model(input_shape: tuple) -> Model:
     return model
 
 def train_model(
-        model: Model,
+        model,
         X: np.ndarray,
         y: np.ndarray
-        ) -> Tuple[Model, dict]:
+        ):
     """
     Fit the model and return a tuple (fitted_model, history)
     """

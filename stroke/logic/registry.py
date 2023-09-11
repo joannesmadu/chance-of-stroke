@@ -7,7 +7,6 @@ import pickle
 
 from colorama import Fore, Style
 from tensorflow import keras
-from google.cloud import storage
 
 from stroke.logic.params import *
 

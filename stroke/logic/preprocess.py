@@ -6,10 +6,27 @@ data = pd.read_csv("/Users/jmadu1/Documents/healthcare-dataset-stroke-data.csv")
 from colorama import Fore, Style
 
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
+
+def clean_data(data):
+    """
+    This function cleans up NaN values from all numerical values
+    """
+    from sklearn.impute import SimpleImputer
+
+    # Instantiate a SimpleImputer object with your strategy of choice
+    imputer = SimpleImputer(strategy="mean")
+
+    # Call the "fit" method on the object
+    imputer.fit(data[['bmi']])
+
+    # Call the "transform" method on the object
+    data['bmi'] = imputer.transform(data[['bmi']])
+
+    return data
 
 def preprocess_features(X: pd.DataFrame) -> np.ndarray:
     def create_sklearn_preprocessor() -> ColumnTransformer:
