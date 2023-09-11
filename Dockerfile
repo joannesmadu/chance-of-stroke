@@ -13,7 +13,7 @@ COPY stroke stroke
 COPY setup.py setup.py
 RUN pip install .
 
-CMD uvicorn stroke.API.fast:app --host 0.0.0.0 --port 8000
+CMD uvicorn stroke.API.fast:app --host 0.0.0.0 --port $PORT
 
 #incorporate somehow: /Users/jmadu1/Documents/healthcare-dataset-stroke-data.csv
 
