@@ -2,7 +2,7 @@
 
 # tensorflow base-images are optimized: lighter than python-buster + pip install tensorflow
 #FROM armswdev/tensorflow-arm-neoverse:r22.09-tf-2.10.0-eigen
-FROM python:3.10.12-slim-buster
+FROM python:3.10.12-slim-bullseye
 
 WORKDIR /prod
 

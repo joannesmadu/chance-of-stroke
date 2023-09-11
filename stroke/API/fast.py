@@ -1,8 +1,7 @@
 #code for API, use predict in production lecture solution as template
 import pandas as pd
 
-from stroke.logic.model import pipeline_predict, load_model
-from stroke.logic.preprocess import clean_data
+from stroke.logic.model import load_model
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

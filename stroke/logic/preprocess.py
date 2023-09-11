@@ -1,8 +1,6 @@
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
-data = pd.read_csv("/Users/jmadu1/Documents/healthcare-dataset-stroke-data.csv")
-
 from colorama import Fore, Style
 
 from sklearn.compose import ColumnTransformer
