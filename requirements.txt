@@ -1,4 +1,3 @@
-#use taxifare doc as template
 wheel
 nbresult
 colorama

@@ -25,7 +25,7 @@ def pipeline_predict(new_data):
 
     pipeline = pickle.load(open("/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl", "rb"))
 
-    predicted_class = pipeline.predict(new_data.loc[:,'id':'smoking_status'])
+    predicted_class = pipeline.predict(new_data.loc[:,'gender':'smoking_status'])
 
     return predicted_class
 
