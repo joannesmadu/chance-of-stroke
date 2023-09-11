@@ -18,14 +18,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# $WIPE_BEGIN
 # 💡 Preload the model to accelerate the predictions
 # We want to avoid loading the heavy Deep Learning model from MLflow at each `get("/predict")`
 # The trick is to load the model in memory when the Uvicorn server starts
 # and then store the model in an `app.state.model` global variable, accessible across all routes!
 # This will prove very useful for the Demo Day
 app.state.model = load_model()
-# $WIPE_END
 
 #http://0.0.0.0:8000/predict?id=4567&gender=Other&age=45&hypertension=0&heart_disease=1&ever_married=Yes&work_type=Private&Residence_type=Urban&avg_glucose_level=112.4&bmi=21&smoking_status=formerly%20smoked
 
