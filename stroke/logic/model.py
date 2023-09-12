@@ -6,7 +6,7 @@ import pickle
 from colorama import Fore, Style
 
 # Timing the TF import
-print(Fore.BLUE + "\nLoading KNClassifier..." + Style.RESET_ALL)
+print(Fore.BLUE + "\nLoading model..." + Style.RESET_ALL)
 start = time.perf_counter()
 
 from sklearn.neighbors import KNeighborsClassifier
