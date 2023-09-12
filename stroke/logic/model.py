@@ -16,14 +16,14 @@ print(f"\n✅ KNClassifier loaded ({round(end - start, 2)}s)")
 
 def load_model():
 
-    pipeline = pickle.load(open("/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl", "rb"))
+    pipeline = pickle.load(open("pipeline.pkl", "rb"))
 
     return pipeline
 
 
 def pipeline_predict(new_data):
 
-    pipeline = pickle.load(open("/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl", "rb"))
+    pipeline = pickle.load(open("pipeline.pkl", "rb"))
 
     predicted_class = pipeline.predict(new_data.loc[:,'gender':'smoking_status'])
 

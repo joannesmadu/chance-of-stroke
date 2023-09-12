@@ -16,3 +16,6 @@ __MACOSX
 
 # Pipeline
 /Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl
+
+#yaml file
+.env.yaml

@@ -13,8 +13,10 @@ COPY stroke stroke
 COPY setup.py setup.py
 RUN pip install .
 
+COPY pipeline.pkl pipeline.pkl
+
 CMD uvicorn stroke.API.fast:app --host 0.0.0.0 --port $PORT
 
-#incorporate somehow: /Users/jmadu1/Documents/healthcare-dataset-stroke-data.csv
+#SERVICE URL https://stroke-t44zttdg3q-ew.a.run.app
 
-#http://0.0.0.0:8000/docs#/default/predict_predict_get
+#http://0.0.0.0:8000/docs#/
