@@ -12,7 +12,7 @@ start = time.perf_counter()
 from sklearn.neighbors import KNeighborsClassifier
 
 end = time.perf_counter()
-print(f"\n✅ KNClassifier loaded ({round(end - start, 2)}s)")
+print(f"\n✅ Model loaded ({round(end - start, 2)}s)")
 
 def load_model():
 

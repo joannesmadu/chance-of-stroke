@@ -31,7 +31,6 @@ app.state.model = load_model()
 
 @app.get("/predict")
 def predict(
-        id: int,
         gender: str,
         age: float,
         hypertension: int,

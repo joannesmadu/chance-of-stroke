@@ -15,7 +15,7 @@ RUN pip install .
 
 COPY pipeline.pkl pipeline.pkl
 
-CMD uvicorn stroke.API.fast:app --host 0.0.0.0 --port $PORT
+CMD uvicorn stroke.API.fast:app --host 0.0.0.0 --port 8000
 
 #SERVICE URL https://stroke-t44zttdg3q-ew.a.run.app
 
