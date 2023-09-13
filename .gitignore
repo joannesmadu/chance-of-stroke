@@ -1,0 +1,21 @@
+.env
+
+# OS generated files #
+######################
+.DS_Store
+__MACOSX
+# Jupiter Notebook #
+*checkpoint.ipynb
+*.ipynb_checkpoints
+
+# inteliJ #
+.idea
+*.gz
+# IDE #
+*.vscode
+
+# Pipeline
+/Users/jmadu1/code/joannesmadu/chance-of-stroke/pipeline.pkl
+
+#yaml file
+.env.yaml
