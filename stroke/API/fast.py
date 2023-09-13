@@ -26,8 +26,6 @@ app.state.model = load_model()
 #http://0.0.0.0:8000/predict?id=4567&gender=Other&age=45&hypertension=0&heart_disease=1&ever_married=Yes&work_type=Private&Residence_type=Urban&avg_glucose_level=112.4&bmi=21&smoking_status=formerly%20smoked
 
 
-#gender	age	hypertension	heart_disease	ever_married	work_type	Residence_type	avg_glucose_level	bmi	smoking_status
-
 @app.get("/predict")
 def predict(
         gender: str,
