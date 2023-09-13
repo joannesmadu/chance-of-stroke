@@ -6,19 +6,17 @@ from colorama import Fore, Style
 from stroke.logic.model import pipeline_predict
 from stroke.logic.preprocess import clean_data
 
-def preprocess() -> None:
+def preprocess():
 
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess_and_train" + Style.RESET_ALL)
 
-
     clean_data()
-
 
     print("✅ preprocess_and_train() done")
 
 
 
-def pred(X_pred: pd.DataFrame = None) -> np.ndarray:
+def pred() -> np.ndarray:
     print(Fore.MAGENTA + "\n ⭐️ Use case: pred" + Style.RESET_ALL)
 
     pipeline_predict()
