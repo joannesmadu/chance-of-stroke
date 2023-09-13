@@ -27,6 +27,13 @@ def pipeline_predict(new_data):
 
     predicted_class = pipeline.predict(new_data.loc[:,'gender':'smoking_status'])
 
+    import numpy as np
+
+    if predicted_class == np.array([0]):
+        print('0.55 chance of no stroke')
+    if predicted_class == np.array([1]):
+        print('0.45 chance of stroke')
+
     return predicted_class
 
 
