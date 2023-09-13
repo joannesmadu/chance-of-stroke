@@ -18,7 +18,6 @@ app.add_middleware(
 )
 
 # 💡 Preload the model to accelerate the predictions
-# We want to avoid loading the heavy Deep Learning model from MLflow at each `get("/predict")`
 # The trick is to load the model in memory when the Uvicorn server starts
 # and then store the model in an `app.state.model` global variable, accessible across all routes!
 # This will prove very useful for the Demo Day
