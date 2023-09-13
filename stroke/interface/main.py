@@ -10,9 +10,7 @@ def preprocess():
 
     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess_and_train" + Style.RESET_ALL)
 
-
     clean_data()
-
 
     print("✅ preprocess_and_train() done")
 
