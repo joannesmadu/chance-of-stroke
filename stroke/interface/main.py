@@ -14,7 +14,6 @@ def preprocess():
 
 
 def pred() -> np.ndarray:
-    print(Fore.MAGENTA + "\n ⭐️ Use case: pred" + Style.RESET_ALL)
 
     pipeline_predict()
 
