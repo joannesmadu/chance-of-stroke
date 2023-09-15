@@ -30,8 +30,8 @@ app.state.model = load_model()
 def predict(
         gender: str,
         age: float,
-        hypertension: int,
-        heart_disease: int,
+        hypertension: str,
+        heart_disease: str,
         ever_married: str,
         work_type: str,
         Residence_type: str,
